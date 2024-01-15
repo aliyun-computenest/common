@@ -436,9 +436,11 @@ Resources:
               - ManagedKubernetesCluster
               - ClusterId
           - Ref: ClusterId
-      HelmChartUrl: '{{ chartUrl }}'
-      DockerConfigJson: '{{ dockerConfigJson }}'
-      ChartValues: {{ values | indent( width=8 ) }}
+      {% raw %}
+      HelmChartUrl: '{{ computenest::helmchart::chartUrl }}'
+      DockerConfigJson: '{{ computenest::helm::dockerconfigjson }}'
+      {% endraw %}
+      ChartValues: {{ values }}
       Namespace:
         Ref: ALIYUN::StackName
       ReleaseName: {{ releaseName }}
