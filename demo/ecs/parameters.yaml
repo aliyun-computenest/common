@@ -1,0 +1,12 @@
+Parameters:
+  - Name: AdminPassword
+    NoEcho: true
+    Type: String
+    Label: 管理员密码
+    AssociationProperty: ALIYUN::ECS::Instance::Password
+Command: |
+    #!/bin/bash
+    echo ${AdminPassword}
+Output:
+  DisplayName: Endpoint
+  Expression: https://${Address}:8080
