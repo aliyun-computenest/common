@@ -441,7 +441,7 @@ Resources:
       ChartValues: {{ values | indent( width=8 ) }}
       Namespace:
         Ref: ALIYUN::StackName
-      ReleaseName: argocd
+      ReleaseName: {{ releaseName }}
       WaitUntil: {{ waitUntils | indent( width=8 )}}
   # 获取service信息，输出到output中
   ClusterApplicationResources:
