@@ -1,0 +1,23 @@
+chartUrl: '{{ computenest::helmchart::chartUrl }}'
+dockerConfigJson: '{{ computenest::helm::dockerconfigjson }}'
+values:
+  server:
+    service:
+      type: LoadBalancer
+  redis:
+    master:
+      persistence:
+        storageClass: alicloud-disk-essd
+        size: 40Gi
+waitUntils:
+  - Kind: Service
+    Name: argocd-server
+    JsonPath: $.status.loadBalancer.ingress[0].ip
+    Operator: NotEmpty
+    FirstMatch: true
+    Timeout: 300
+outputs:
+  Kind: Service
+  Name: argocd-server
+  JsonPath: $.status.loadBalancer.ingress[0].ip
+protocol: https
