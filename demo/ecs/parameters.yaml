@@ -1,0 +1,5 @@
+command: |
+  #!/bin/bash
+  echo hello
+protocol: http
+port: 8080
