@@ -193,7 +193,7 @@ Resources:
       Type: RunShellScript
       Sync: true
       Timeout: 3600
-      CommandContent: {{ command | indent(width=8)}}
+      CommandContent: {{ Command | indent(width=8)}}
 Outputs:
 {%- for item in Outputs %}
   {{ item.DisplayName }}:
