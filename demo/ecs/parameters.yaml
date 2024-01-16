@@ -5,6 +5,12 @@ Parameters:
     Label: 管理员密码
     AssociationProperty: ALIYUN::ECS::Instance::Password
 Command: echo ${AdminPassword}
+InstanceTypes:
+  - ecs.c6.large
+  - ecs.c6.xlarge
+  - ecs.c6.2xlarge
+Ports:
+  - 8080
 Outputs:
   - Label: Endpoint
     Expression: https://${Address}:8080

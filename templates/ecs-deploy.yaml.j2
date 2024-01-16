@@ -65,9 +65,9 @@ Parameters:
     AssociationPropertyMetadata:
       InstanceChargeType: ${PayType}
     AllowedValues:
-      - ecs.c6.large
-      - ecs.c6.xlarge
-      - ecs.c6.2xlarge
+{%- for InstanceType in InstanceTypes %}
+      - {{ InstanceType }}
+{% endfor -%}
   InstancePassword:
     NoEcho: true
     Type: String
@@ -151,11 +151,13 @@ Resources:
         Ref: VpcId
       # 安全组入端口
       SecurityGroupIngress:
-        - PortRange: {{ port }}/{{ port }}
+{%- for Port in Ports %}
+        - PortRange: {{ Port }}/{{ Port }}
           Priority: 1
           SourceCidrIp: 0.0.0.0/0
           IpProtocol: tcp
           NicType: internet
+{% endfor -%}
   InstanceGroup:
     Type: ALIYUN::ECS::InstanceGroup
     Properties:
