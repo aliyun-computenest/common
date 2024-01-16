@@ -1,22 +1,25 @@
+ReleaseName: harbor
+Parameters:
+  - Name: AdminPassword
+    NoEcho: true
+    Type: String
+    Label: 管理员密码
+    AssociationProperty: ALIYUN::ECS::Instance::Password
 Values:
-  server:
-    service:
-      type: LoadBalancer
-  redis:
-    master:
+  service:
+    type: LoadBalancer
+  postgresql:
+    enabled: true
+    adminPassword:
+      Ref: AdminPassword
+    primary:
       persistence:
+        enabled: true
         storageClass: alicloud-disk-essd
         size: 40Gi
-WaitUntils:
-  - Kind: Service
-    Name: argocd-server
-    JsonPath: $.status.loadBalancer.ingress[0].ip
-    Operator: NotEmpty
-    FirstMatch: true
-    Timeout: 300
 Outputs:
-  Kind: Service
-  Name: argocd-server
-  JsonPath: $.status.loadBalancer.ingress[0].ip
-Protocol: https
-port: 8080
+  - Kind: Service
+    Name: harbor-server
+    Label: Endpoint
+    JsonPath: $.status.loadBalancer.ingress[0].ip
+    Expression: https://${OutputValue}:8080

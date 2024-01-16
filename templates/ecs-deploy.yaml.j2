@@ -66,6 +66,7 @@ Parameters:
       InstanceChargeType: ${PayType}
     AllowedValues:
       - ecs.c6.large
+      - ecs.c6.xlarge
       - ecs.c6.2xlarge
   InstancePassword:
     NoEcho: true
@@ -193,10 +194,11 @@ Resources:
       Type: RunShellScript
       Sync: true
       Timeout: 3600
-      CommandContent: {{ Command | indent(width=8)}}
+      CommandContent:
+        {{ Command | indent(width=8)}}
 Outputs:
 {%- for item in Outputs %}
-  {{ item.DisplayName }}:
+  {{ item.Label }}:
     Value:
       Fn::Sub:
         - {{ item.Expression }}

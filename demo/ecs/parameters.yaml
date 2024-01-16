@@ -4,9 +4,7 @@ Parameters:
     Type: String
     Label: 管理员密码
     AssociationProperty: ALIYUN::ECS::Instance::Password
-Command: |
-    #!/bin/bash
-    echo ${AdminPassword}
-Output:
-  DisplayName: Endpoint
-  Expression: https://${Address}:8080
+Command: echo ${AdminPassword}
+Outputs:
+  - Label: Endpoint
+    Expression: https://${Address}:8080

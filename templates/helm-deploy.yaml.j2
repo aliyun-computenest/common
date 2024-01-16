@@ -482,7 +482,7 @@ Resources:
 {% endfor -%}
 Outputs:
 {%- for item in Outputs %}
-  {{ item.DisplayName }}:
+  {{ item.Label }}:
     Value:
       Fn::Sub:
         - {{ item.Expression }}
