@@ -295,7 +295,34 @@ Parameters:
             - ${CreateAck}
             - true
     Default: 172.16.0.0/16
-  {{ parameters | indent(width=2, newline=False) }}
+{%- for item in Parameters %}
+  {{ item.Name }}:
+    Type: {{ item.Type }}
+{%- if item.AssociationProperty %}
+    AssociationProperty: {{item.AssociationProperty}}
+{% endif -%}
+  {%- if item.Label %}
+    Label: {{item.Label}}
+{% endif -%}
+  {%- if item.NoEcho %}
+    NoEcho: {{item.NoEcho}}
+{% endif -%}
+{%- if item.AssocaitionPropertyMetadata %}
+    AssociationPropertyMetadata: {{item.AssociationPropertyMetadata}}
+{% endif -%}
+{%- if item.Default %}
+    Default: {{item.Default}}
+{% endif -%}
+{%- if item.MinValue %}
+    MinValue: {{item.MinValue}}
+{% endif -%}
+{%- if item.MaxValue %}
+    MaxValue: {{item.MaxValue}}
+{% endif -%}
+{%- if item.AllowedValues %}
+    AllowedValues: {{item.AllowedValues | indent(width=4) }}
+{% endif -%}
+{% endfor -%}
 Conditions:
   CreateAck:
     Fn::Equals:
@@ -436,46 +463,36 @@ Resources:
               - ManagedKubernetesCluster
               - ClusterId
           - Ref: ClusterId
-      {% raw %}
+      {% raw -%}
       HelmChartUrl: '{{ computenest::helmchart::chartUrl }}'
       DockerConfigJson: '{{ computenest::helm::dockerconfigjson }}'
-      {% endraw %}
-      ChartValues: {{ values }}
+      {%- endraw %}
+      ChartValues: {{ Values | indent(width=8) }}
       Namespace:
         Ref: ALIYUN::StackName
-      ReleaseName: {{ releaseName }}
-      WaitUntil: {{ waitUntils | indent( width=8 )}}
-  # 获取service信息，输出到output中
-  ClusterApplicationResources:
-    Type: DATASOURCE::CS::ClusterApplicationResources
-    DependsOn:
-      - ComputenestHelmApplication
-    Properties:
-      ClusterId:
-        Fn::If:
-          - CreateAck
-          - Fn::GetAtt:
-              - ManagedKubernetesCluster
-              - ClusterId
-          - Ref: ClusterId
-      Namespace:
-        Ref: ALIYUN::StackName
-      FirstMatch: true
-      {{ outputs | indent( width=6 ,newline=False)}}
+      ReleaseName: {{ ReleaseName }}
+      WaitUntil:
+{%- for item in Outputs %}
+        - Kind: {{ item.Kind }}
+          Name: {{ item.Name }}
+          JsonPath: {{ item.JsonPath }}
+          Operator: NotEmpty
+          FistMatch: true
+          Timeout: 300
+{% endfor -%}
 Outputs:
-  # 将公网ip做为http返回的地址显示在控制台
-  Endpoint:
-    Description:
-      zh-cn: 访问地址
-      en: Visit Endpoint
+{%- for item in Outputs %}
+  {{ item.Label }}:
     Value:
-  # 将公网ip做为http返回的地址显示在控制台
       Fn::Sub:
-        - "{{ protocol }}://${ServerAddress}"
-        - ServerAddress:
-            Fn::GetAtt:
-              - ClusterApplicationResources
-              - Response
+        - {{ item.Expression }}
+        - OutputValue:
+            Fn::Select:
+              - {{ loop.index0 }}
+              - Fn::GetAtt:
+                - ComputenestHelmApplication
+                - Outputs
+{% endfor -%}
 Metadata:
   ALIYUN::ROS::Interface:
     ParameterGroups:
@@ -512,9 +529,9 @@ Metadata:
           en: Basic Configuration
           zh-cn: 基础配置
       - Parameters:
-        {% for parameter in parameters %}
-         - {{ parameter }}
-        {% endfor %}
+        {%- for parameter in Parameters %}
+         - {{ parameter.Name }}
+        {% endfor -%}
         Label:
           en: Software Configuration
           zh-cn: 软件配置

@@ -65,8 +65,9 @@ Parameters:
     AssociationPropertyMetadata:
       InstanceChargeType: ${PayType}
     AllowedValues:
-      - ecs.c6.large
-      - ecs.c6.2xlarge
+{%- for InstanceType in InstanceTypes %}
+      - {{ InstanceType }}
+{% endfor -%}
   InstancePassword:
     NoEcho: true
     Type: String
@@ -112,6 +113,34 @@ Parameters:
       zh-cn: 现有业务网络交换机的实例ID
     Default: ''
     AssociationProperty: 'ALIYUN::ECS::VSwitch::VSwitchId'
+{%- for item in Parameters %}
+  {{ item.Name }}:
+    Type: {{ item.Type }}
+{%- if item.AssociationProperty %}
+    AssociationProperty: {{item.AssociationProperty}}
+{% endif -%}
+  {%- if item.Label %}
+    Label: {{item.Label}}
+{% endif -%}
+  {%- if item.NoEcho %}
+    NoEcho: {{item.NoEcho}}
+{% endif -%}
+{%- if item.AssocaitionPropertyMetadata %}
+    AssociationPropertyMetadata: {{item.AssociationPropertyMetadata}}
+{% endif -%}
+{%- if item.Default %}
+    Default: {{item.Default}}
+{% endif -%}
+{%- if item.MinValue %}
+    MinValue: {{item.MinValue}}
+{% endif -%}
+{%- if item.MaxValue %}
+    MaxValue: {{item.MaxValue}}
+{% endif -%}
+{%- if item.AllowedValues %}
+    AllowedValues: {{item.AllowedValues | indent(width=4) }}
+{% endif -%}
+{% endfor -%}
 Resources:
   SecurityGroup:
     Type: ALIYUN::ECS::SecurityGroup
@@ -122,11 +151,13 @@ Resources:
         Ref: VpcId
       # 安全组入端口
       SecurityGroupIngress:
-        - PortRange: {{ port }}/{{ port }}
+{%- for Port in Ports %}
+        - PortRange: {{ Port }}/{{ Port }}
           Priority: 1
           SourceCidrIp: 0.0.0.0/0
           IpProtocol: tcp
           NicType: internet
+{% endfor -%}
   InstanceGroup:
     Type: ALIYUN::ECS::InstanceGroup
     Properties:
@@ -165,21 +196,21 @@ Resources:
       Type: RunShellScript
       Sync: true
       Timeout: 3600
-      CommandContent: {{ command | indent(width=8)}}
+      CommandContent:
+        {{ Command | indent(width=8)}}
 Outputs:
-  VisitUrl:
-    Description:
-      en: VisitUrl.
-      zh-cn: 访问页面。
+{%- for item in Outputs %}
+  {{ item.Label }}:
     Value:
       Fn::Sub:
-      - {{ protocol }}://${Address}:{{ port }}
-      - Address:
-          Fn::Select:
-          - 0
-          - Fn::GetAtt:
-            - InstanceGroup
-            - PublicIps
+        - {{ item.Expression }}
+        - Address:
+            Fn::Select:
+            - 0
+            - Fn::GetAtt:
+              - InstanceGroup
+              - PublicIps
+{% endfor -%}
 Metadata:
   ALIYUN::ROS::Interface:
     ParameterGroups:

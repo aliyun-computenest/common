@@ -1,23 +1,25 @@
-chartUrl: '{{ computenest::helmchart::chartUrl }}'
-dockerConfigJson: '{{ computenest::helm::dockerconfigjson }}'
-values:
-  server:
-    service:
-      type: LoadBalancer
-  redis:
-    master:
+ReleaseName: harbor
+Parameters:
+  - Name: AdminPassword
+    NoEcho: true
+    Type: String
+    Label: 管理员密码
+    AssociationProperty: ALIYUN::ECS::Instance::Password
+Values:
+  service:
+    type: LoadBalancer
+  postgresql:
+    enabled: true
+    adminPassword:
+      Ref: AdminPassword
+    primary:
       persistence:
+        enabled: true
         storageClass: alicloud-disk-essd
         size: 40Gi
-waitUntils:
+Outputs:
   - Kind: Service
-    Name: argocd-server
+    Name: harbor-server
+    Label: Endpoint
     JsonPath: $.status.loadBalancer.ingress[0].ip
-    Operator: NotEmpty
-    FirstMatch: true
-    Timeout: 300
-outputs:
-  Kind: Service
-  Name: argocd-server
-  JsonPath: $.status.loadBalancer.ingress[0].ip
-protocol: https
+    Expression: https://${OutputValue}:8080
