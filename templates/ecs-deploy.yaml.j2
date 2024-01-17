@@ -64,10 +64,9 @@ Parameters:
     AssociationProperty: ALIYUN::ECS::Instance::InstanceType
     AssociationPropertyMetadata:
       InstanceChargeType: ${PayType}
-    AllowedValues:
-{%- for InstanceType in InstanceTypes %}
+    AllowedValues:{% for InstanceType in InstanceTypes %}
       - {{ InstanceType }}
-{% endfor -%}
+    {%- endfor %}
   InstancePassword:
     NoEcho: true
     Type: String
@@ -116,31 +115,34 @@ Parameters:
 {%- for item in Parameters %}
   {{ item.Name }}:
     Type: {{ item.Type }}
-{%- if item.AssociationProperty %}
-    AssociationProperty: {{item.AssociationProperty}}
-{% endif -%}
-  {%- if item.Label %}
-    Label: {{item.Label}}
-{% endif -%}
-  {%- if item.NoEcho %}
-    NoEcho: {{item.NoEcho}}
-{% endif -%}
-{%- if item.AssocaitionPropertyMetadata %}
-    AssociationPropertyMetadata: {{item.AssociationPropertyMetadata}}
-{% endif -%}
-{%- if item.Default %}
-    Default: {{item.Default}}
-{% endif -%}
-{%- if item.MinValue %}
-    MinValue: {{item.MinValue}}
-{% endif -%}
-{%- if item.MaxValue %}
-    MaxValue: {{item.MaxValue}}
-{% endif -%}
-{%- if item.AllowedValues %}
-    AllowedValues: {{item.AllowedValues | indent(width=4) }}
-{% endif -%}
-{% endfor -%}
+    {%- if item.AssociationProperty %}
+    AssociationProperty: {{ item.AssociationProperty }}
+    {%- endif %}
+    {%- if item.Label %}
+    Label: {{ item.Label }}
+    {%- endif %}
+    {%- if item.NoEcho %}
+    NoEcho: {{ item.NoEcho }}
+    {%- endif %}
+    {%- if item.AssocaitionPropertyMetadata %}
+    AssociationPropertyMetadata: {{ item.AssocaitionPropertyMetadata }}
+    {%- endif %}
+    {%- if item.Default %}
+    Default: {{ item.Default }}
+    {%- endif %}
+    {%- if item.MinValue %}
+    MinValue: {{ item.MinValue }}
+    {%- endif %}
+    {%- if item.MaxValue %}
+    MaxValue: {{ item.MaxValue }}
+    {%- endif %}
+    {%- if item.AllowedValues %}
+    AllowedValues:
+      {%- for value in item.AllowedValues %}
+      - {{ value }}
+      {%- endfor %}
+    {%- endif %}
+{%- endfor %}
 Resources:
   SecurityGroup:
     Type: ALIYUN::ECS::SecurityGroup
@@ -149,15 +151,13 @@ Resources:
         Ref: ALIYUN::StackName
       VpcId:
         Ref: VpcId
-      # 安全组入端口
-      SecurityGroupIngress:
-{%- for Port in Ports %}
+      SecurityGroupIngress: {%- for Port in Ports %}
         - PortRange: {{ Port }}/{{ Port }}
           Priority: 1
           SourceCidrIp: 0.0.0.0/0
           IpProtocol: tcp
           NicType: internet
-{% endfor -%}
+      {%- endfor %}
   InstanceGroup:
     Type: ALIYUN::ECS::InstanceGroup
     Properties:
@@ -198,8 +198,7 @@ Resources:
       Timeout: 3600
       CommandContent:
         {{ Command | indent(width=8)}}
-Outputs:
-{%- for item in Outputs %}
+Outputs: {%- for item in Outputs %}
   {{ item.Label }}:
     Value:
       Fn::Sub:
@@ -210,7 +209,7 @@ Outputs:
             - Fn::GetAtt:
               - InstanceGroup
               - PublicIps
-{% endfor -%}
+{%- endfor %}
 Metadata:
   ALIYUN::ROS::Interface:
     ParameterGroups:
