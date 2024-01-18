@@ -228,6 +228,13 @@ Metadata:
         Label:
           default: 资源配置
       - Parameters:
+        {%- for parameter in Parameters %}
+          - {{ parameter.Name }}
+        {% endfor -%}
+        Label:
+          en: Software Configuration
+          zh-cn: 软件配置
+      - Parameters:
           - ZoneId
           - VpcId
           - VSwitchId
