@@ -112,6 +112,9 @@ Parameters:
       zh-cn: 现有业务网络交换机的实例ID
     Default: ''
     AssociationProperty: 'ALIYUN::ECS::VSwitch::VSwitchId'
+    AssociationPropertyMetadata:
+      VpcId: VpcId
+      ZoneId: ZoneId
 {%- for item in Parameters %}
   {{ item.Name }}:
     Type: {{ item.Type }}
