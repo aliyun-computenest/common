@@ -198,8 +198,8 @@ Resources:
       Timeout: 3600
       CommandContent:
         {{ Command | indent(width=8)}}
-Outputs: {%- for item in Outputs %}
-  {{ item.Label }}:
+Outputs: {% for item in Outputs %}
+  {{ item.DisplayName }}:
     Value:
       Fn::Sub:
         - {{ item.Expression }}
