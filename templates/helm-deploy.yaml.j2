@@ -477,7 +477,7 @@ Resources:
           Name: {{ item.Name }}
           JsonPath: {{ item.JsonPath }}
           Operator: NotEmpty
-          FistMatch: true
+          FirstMatch: true
           Timeout: 300
 {% endfor -%}
 Outputs:
@@ -491,7 +491,7 @@ Outputs:
               - {{ loop.index0 }}
               - Fn::GetAtt:
                 - ComputenestHelmApplication
-                - Outputs
+                - WaitUntilData
 {% endfor -%}
 Metadata:
   ALIYUN::ROS::Interface:
