@@ -531,6 +531,7 @@ Metadata:
         Label:
           en: Basic Configuration
           zh-cn: 基础配置
+      {% if Parameters | length > 0 %}
       - Parameters:
         {%- for parameter in Parameters %}
          - {{ parameter.Name }}
@@ -538,3 +539,4 @@ Metadata:
         Label:
           en: Software Configuration
           zh-cn: 软件配置
+      {% endif %}
