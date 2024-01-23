@@ -64,9 +64,11 @@ Parameters:
     AssociationProperty: ALIYUN::ECS::Instance::InstanceType
     AssociationPropertyMetadata:
       InstanceChargeType: ${PayType}
+    {%- if item.AllowedValues %}
     AllowedValues:{% for InstanceType in InstanceTypes %}
       - {{ InstanceType }}
-    {%- endfor %}
+      {%- endfor %}
+    {% endif %}
   InstancePassword:
     NoEcho: true
     Type: String

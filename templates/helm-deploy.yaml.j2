@@ -319,9 +319,12 @@ Parameters:
 {%- if item.MaxValue %}
     MaxValue: {{item.MaxValue}}
 {% endif -%}
-{%- if item.AllowedValues %}
-    AllowedValues: {{item.AllowedValues | indent(width=4) }}
-{% endif -%}
+    {%- if item.AllowedValues %}
+    AllowedValues:
+      {%- for value in item.AllowedValues %}
+      - {{ value }}
+      {%- endfor %}
+    {%- endif %}
 {% endfor -%}
 Conditions:
   CreateAck:
