@@ -64,7 +64,7 @@ Parameters:
     AssociationProperty: ALIYUN::ECS::Instance::InstanceType
     AssociationPropertyMetadata:
       InstanceChargeType: ${PayType}
-    {%- if item.AllowedValues %}
+    {%- if InstanceTypes %}
     AllowedValues:{% for InstanceType in InstanceTypes %}
       - {{ InstanceType }}
       {%- endfor %}
@@ -129,8 +129,8 @@ Parameters:
     {%- if item.NoEcho %}
     NoEcho: {{ item.NoEcho }}
     {%- endif %}
-    {%- if item.AssocaitionPropertyMetadata %}
-    AssociationPropertyMetadata: {{ item.AssocaitionPropertyMetadata }}
+    {%- if item.AssociationPropertyMetadata %}
+    AssociationPropertyMetadata: {{ item.AssociationPropertyMetadata }}
     {%- endif %}
     {%- if item.Default %}
     Default: {{ item.Default }}
@@ -191,6 +191,15 @@ Resources:
       InternetMaxBandwidthOut: 5
       IoOptimized: optimized
       MaxAmount: 1
+  WaitCondition:
+    Type: ALIYUN::ROS::WaitCondition
+    Properties:
+      Count: 1
+      Handle:
+        Ref: WaitConditionHandle
+      Timeout: {{ CommandTimeout }}
+  WaitConditionHandle:
+    Type: ALIYUN::ROS::WaitConditionHandle
   InstallPackage:
     Type: ALIYUN::ECS::RunCommand
     Properties:
@@ -202,7 +211,15 @@ Resources:
       Sync: true
       Timeout: 3600
       CommandContent:
-        {{ Command | indent(width=8)}}
+        Fn::Sub:
+          - |
+            {{ Command | indent(width=12)}}
+            # 执行成功回调WaitCondition结束waitCondition的等待
+            ${CurlCli} -d "{\"Data\" : \"Success\", \"status\" : \"SUCCESS\"}"
+          - CurlCli:
+              Fn::GetAtt:
+                - WaitConditionHandle
+                - CurlCli
 Outputs: {% for item in Outputs %}
   {{ item.DisplayName }}:
     Value:
