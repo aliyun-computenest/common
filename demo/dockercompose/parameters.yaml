@@ -7,7 +7,7 @@ Parameters:
 DockerComposeYaml: |-
   services:
     hello_world:
-      image: nginx
+      image: {{computenest::acrimage::nginx}}
       ports:
         - 80:80
 PreStartCommand: echo before start docker
