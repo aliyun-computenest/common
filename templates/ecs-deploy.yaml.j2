@@ -220,6 +220,7 @@ Resources:
               Fn::GetAtt:
                 - WaitConditionHandle
                 - CurlCli
+{%- if Outputs %}
 Outputs: {% for item in Outputs %}
   {{ item.DisplayName }}:
     Value:
@@ -232,6 +233,7 @@ Outputs: {% for item in Outputs %}
               - InstanceGroup
               - PublicIps
 {%- endfor %}
+{% endif %}
 Metadata:
   ALIYUN::ROS::Interface:
     ParameterGroups:
