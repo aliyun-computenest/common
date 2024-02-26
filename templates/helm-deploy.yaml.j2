@@ -467,8 +467,8 @@ Resources:
               - ClusterId
           - Ref: ClusterId
       {% raw -%}
-      HelmChartUrl: '{{ computenest::helmchart::chartUrl }}'
-      DockerConfigJson: '{{ computenest::helm::dockerconfigjson }}'
+      HelmChartUrl: '{{computenest::helmchart::chartUrl}}'
+      DockerConfigJson: '{{computenest::helm::dockerconfigjson}}'
       {%- endraw %}
       ChartValues: |
         {{ Values | indent(width=8) }}
