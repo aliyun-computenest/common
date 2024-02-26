@@ -470,7 +470,7 @@ Resources:
       HelmChartUrl: '{{computenest::helmchart::chartUrl}}'
       DockerConfigJson: '{{computenest::helm::dockerconfigjson}}'
       {%- endraw %}
-      ChartValues: |
+      ChartValues:
         {{ Values | indent(width=8) }}
       Namespace:
         Ref: ALIYUN::StackName
